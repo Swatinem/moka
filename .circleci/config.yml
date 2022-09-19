@@ -6,12 +6,18 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Show CPU info
+          command: |
+            nproc
+            lscpu
+      - run:
           name: Run cargo tarpaulin (Allowing a failure)
           command: |
             docker run --security-opt seccomp=unconfined -v "${PWD}:/volume" \
               --env RUSTFLAGS='--cfg circleci' \
               xd009642/tarpaulin \
               cargo tarpaulin -v \
+                --j 1 \
                 --features 'sync, future, dash' \
                 --ciserver circle-ci \
                 --coveralls ${COVERALLS_TOKEN} \

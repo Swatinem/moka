@@ -17,6 +17,9 @@ on:
     # Run against the last commit on the default branch on Friday at 9pm (UTC?)
     - cron:  '0 21 * * 5'
 
+env:
+  TEST_THREADS: "1"
+
 jobs:
   linux-cross:
     runs-on: ubuntu-latest
@@ -64,18 +67,18 @@ jobs:
         with:
           use-cross: true
           command: test
-          args: --release --features sync --target ${{ matrix.platform.target }} ${{ matrix.platform.cargo-opts }}
+          args: -j 1 --release --features sync --target ${{ matrix.platform.target }} ${{ matrix.platform.cargo-opts }} -- --test-threads=${{ env.TEST_THREADS }}
 
       - name: Run tests (future feature)
         uses: actions-rs/cargo@v1
         with:
           use-cross: true
           command: test
-          args: --release --features future --target ${{ matrix.platform.target }} ${{ matrix.platform.cargo-opts }}
+          args: -j 1 --release --features future --target ${{ matrix.platform.target }} ${{ matrix.platform.cargo-opts }}
 
       - name: Run tests (dash feature)
         uses: actions-rs/cargo@v1
         with:
           use-cross: true
           command: test
-          args: --release --features dash --target ${{ matrix.platform.target }} ${{ matrix.platform.cargo-opts }}
+          args: -j 1 --release --features dash --target ${{ matrix.platform.target }} ${{ matrix.platform.cargo-opts }}
