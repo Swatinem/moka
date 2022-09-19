@@ -1,5 +1,8 @@
 name: CI (Quanta disabled)
 
+env:
+  NUM_THREADS_DBG: "1"
+
 on:
   push:
     paths-ignore:
@@ -70,28 +73,28 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --no-default-features --features 'sync, atomic64'
+          args: -j 1 --no-default-features --features 'sync, atomic64' -- --test-threads=${{ env.NUM_THREADS_DBG }}
 
       - name: Run tests (release, but no quanta feature)
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --release --no-default-features --features 'sync, atomic64'
+          args: -j 1 --release --no-default-features --features 'sync, atomic64'
 
       - name: Run tests (future feature, but no quanta and sync features)
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --no-default-features --features 'future, atomic64'
+          args: -j 1 --no-default-features --features 'future, atomic64' -- --test-threads=${{ env.NUM_THREADS_DBG }}
 
       - name: Run tests (future, sync and logging features, but no quanta feature)
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --no-default-features --features 'sync, future, atomic64, logging'
+          args: -j 1 --no-default-features --features 'sync, future, atomic64, logging' -- --test-threads=${{ env.NUM_THREADS_DBG }}
 
       - name: Run tests (dash feature, but no quanta and sync features)
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --no-default-features --features 'dash, atomic64'
+          args: -j 1 --no-default-features --features 'dash, atomic64' -- --test-threads=${{ env.NUM_THREADS_DBG }}

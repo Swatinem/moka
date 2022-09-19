@@ -1,5 +1,8 @@
 name: CI
 
+env:
+  NUM_THREADS_DBG: "1"
+
 on:
   push:
     paths-ignore:
@@ -83,7 +86,7 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --features sync
+          args: -j 1 --features sync -- --test-threads=${{ env.NUM_THREADS_DBG }}
 
       - name: Run tests (debug, sync feature, thread-pool test for sync::Cache)
         uses: actions-rs/cargo@v1
@@ -101,22 +104,22 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --release --features sync
+          args: -j 1 --release --features sync
 
       - name: Run tests (future feature, but no sync feature)
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --no-default-features --features 'future, atomic64, quanta'
+          args: -j 1 --no-default-features --features 'future, atomic64, quanta' -- --test-threads=${{ env.NUM_THREADS_DBG }}
 
       - name: Run tests (future, sync and logging features)
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --features 'future, sync, logging'
+          args: -j 1 --features 'future, sync, logging' -- --test-threads=${{ env.NUM_THREADS_DBG }}
 
       - name: Run tests (dash feature, but no sync feature)
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: --no-default-features --features 'dash, atomic64, quanta'
+          args: -j 1 --no-default-features --features 'dash, atomic64, quanta' -- --test-threads=${{ env.NUM_THREADS_DBG }}
