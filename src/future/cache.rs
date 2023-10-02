@@ -1633,7 +1633,7 @@ where
         if let Some(entry) = maybe_entry {
             entry
         } else {
-            self.insert_with_hash_and_fun(key, hash, init, replace_if, need_key)
+            self.insert_with_hash_and_fun(key, hash, init, replace_if.as_mut(), need_key)
                 .await
         }
     }
@@ -1658,7 +1658,7 @@ where
             entry
         } else {
             let key = Arc::new(key.to_owned());
-            self.insert_with_hash_and_fun(key, hash, init, replace_if, need_key)
+            self.insert_with_hash_and_fun(key, hash, init, replace_if.as_mut(), need_key)
                 .await
         }
     }
@@ -1668,7 +1668,7 @@ where
         key: Arc<K>,
         hash: u64,
         init: Pin<&mut impl Future<Output = V>>,
-        replace_if: Option<impl FnMut(&V) -> bool + Send>,
+        replace_if: Option<&mut (impl FnMut(&V) -> bool + Send)>,
         need_key: bool,
     ) -> Entry<K, V> {
         let k = if need_key {

@@ -150,7 +150,7 @@ where
         c_hash: u64,
         type_id: TypeId,
         cache: &C,
-        mut ignore_if: Option<I>,
+        ignore_if: Option<&mut I>,
         // Future to initialize a new value.
         init: Pin<&mut impl Future<Output = O>>,
         // Function to convert a value O, returned from the init future, into
@@ -218,10 +218,7 @@ where
         let waiter_guard = WaiterGuard::new(w_key, w_hash, &self.waiters, lock);
 
         // Check if the value has already been inserted by other thread.
-        if let Some(value) = cache
-            .get_without_recording(c_key, c_hash, ignore_if.as_mut())
-            .await
-        {
+        if let Some(value) = cache.get_without_recording(c_key, c_hash, ignore_if).await {
             // Yes. Set the waiter value, remove our waiter, and return
             // the existing value.
             waiter_guard.set_waiter_value(WaiterValue::Ready(Ok(value.clone())));
